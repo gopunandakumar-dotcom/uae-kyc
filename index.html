@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UAE KYC Verify</title>
+<style>
+:root{--bg:#f5f7fa;--card:#fff;--ink:#14202e;--muted:#5f6c7b;--line:#dde3ea;--brand:#0b6b4f;--brand2:#0a5640;--accent:#b8923a;--err:#c0392b;--ok:#1e8e5a;--warn:#b7791f;
+  --okbg:#e3f4ec;--errbg:#fbe7e4;--warnbg:#fbf0dc;--infobg:#e5eef9;--info:#2b5d9b}
+@media (prefers-color-scheme:dark){:root{--bg:#0e141b;--card:#161f29;--ink:#e8edf2;--muted:#98a5b3;--line:#2a3643;--brand:#2fb386;--brand2:#25946d;--accent:#d8b45c;--err:#ff7a6b;--ok:#4cd08f;--warn:#e9b54f;
+  --okbg:#15362a;--errbg:#3d1d1a;--warnbg:#3a2e16;--infobg:#172a40;--info:#7fb0ea}}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--brand);color:#fff}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:14px 0;gap:12px;flex-wrap:wrap}
+.logo{font-weight:700;font-size:1.15rem;letter-spacing:.2px}
+.logo span{color:#f3d58a}
+.tabs{display:flex;gap:4px}
+.tabs a{color:#fff;text-decoration:none;font-size:.9rem;font-weight:600;padding:7px 14px;border-radius:8px;opacity:.85}
+.tabs a.on{background:rgba(255,255,255,.18);opacity:1}
+.hero{padding:22px 0 48px}
+.hero h1{margin:0 0 8px;font-size:clamp(1.5rem,4vw,2.3rem);line-height:1.2}
+.hero p{margin:0;max-width:62ch;opacity:.92}
+main{margin-top:-28px;padding-bottom:40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+@media(max-width:600px){.card{padding:18px}}
+.steps{display:flex;gap:6px;margin:0 0 22px;padding:0;list-style:none}
+.steps li{flex:1;text-align:center;font-size:.76rem;color:var(--muted);border-top:4px solid var(--line);padding-top:6px}
+.steps li.on{color:var(--brand);border-color:var(--brand);font-weight:600}
+.steps li.done{border-color:var(--ok);color:var(--ok)}
+h2{margin:0 0 4px;font-size:1.25rem}
+h3{margin:18px 0 8px;font-size:1.02rem}
+.sub{margin:0 0 18px;color:var(--muted);font-size:.93rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.steps li{font-size:0;padding-top:4px}.steps li.on{font-size:.72rem}}
+label,legend{display:block;font-weight:600;font-size:.88rem;margin-bottom:4px}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{min-height:70px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);outline-offset:1px}
+.hint{font-size:.78rem;color:var(--muted);min-height:1.2em;margin-top:3px}
+.field.bad input,.field.bad select{border-color:var(--err)}.field.bad .hint{color:var(--err)}
+.field.good input,.field.good select{border-color:var(--ok)}.field.good .hint{color:var(--ok)}
+.full{grid-column:1/-1}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{display:flex;align-items:center;gap:8px;font-weight:500;border:1px solid var(--line);border-radius:9px;padding:9px 14px;cursor:pointer;margin:0;background:var(--bg)}
+.opt input{width:auto;margin:0}
+.q{padding:12px 0;border-bottom:1px solid var(--line)}
+.q legend{font-weight:500;font-size:.93rem;margin-bottom:8px}
+.row{display:flex;justify-content:space-between;gap:10px;margin-top:20px;flex-wrap:wrap}
+button{font:inherit;font-weight:600;border:0;border-radius:9px;padding:11px 22px;cursor:pointer;background:var(--brand);color:#fff}
+button:hover{background:var(--brand2)}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button.ghost:hover{background:var(--bg)}
+button.sm{padding:7px 12px;font-size:.85rem}
+button.danger{background:var(--err)}
+button.warn{background:var(--warn)}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:14px;background:var(--bg)}
+.drop input{border:0;padding:0;background:none}
+.ubo{display:grid;grid-template-columns:2fr 1.3fr 90px auto;gap:8px;align-items:center;margin-bottom:8px}
+@media(max-width:600px){.ubo{grid-template-columns:1fr 1fr}.ubo input:first-child{grid-column:1/-1}}
+dl.kv{display:grid;grid-template-columns:max-content 1fr;gap:6px 18px;margin:0}
+dl.kv dt{color:var(--muted);font-size:.88rem}dl.kv dd{margin:0;font-weight:600;word-break:break-word}
+@media(max-width:520px){dl.kv{grid-template-columns:1fr;gap:0}dl.kv dd{margin-bottom:8px}}
+.check{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:.9rem;font-weight:400}
+.check input{width:auto;margin-top:4px}
+.result{text-align:center;padding:16px 0}
+.tick{width:64px;height:64px;border-radius:50%;background:var(--ok);color:#fff;font-size:34px;display:grid;place-items:center;margin:0 auto 12px}
+.ref{display:inline-block;font:700 1.2rem ui-monospace,Consolas,monospace;background:var(--bg);border:1px solid var(--line);padding:8px 16px;border-radius:8px;margin:8px 0}
+.info{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
+@media(max-width:700px){.info{grid-template-columns:1fr}}
+.info div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.info h3{margin:0 0 4px;font-size:1rem;color:var(--brand)}
+.info p{margin:0;font-size:.88rem;color:var(--muted)}
+.notice{margin-top:22px;font-size:.8rem;color:var(--muted);border-left:3px solid var(--accent);padding:6px 12px}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:20px 16px 40px}
+/* reviewer */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg)}
+.stat b{display:block;font-size:1.5rem;line-height:1.2}
+.stat span{font-size:.78rem;color:var(--muted)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.toolbar input{flex:1 1 200px;width:auto}.toolbar select{flex:0 1 180px;width:auto}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:.88rem;min-width:620px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:var(--bg)}
+tbody tr{cursor:pointer}tbody tr:hover,tbody tr.sel{background:var(--bg)}
+tbody tr:last-child td{border-bottom:0}
+.mono{font-family:ui-monospace,Consolas,monospace}
+.badge{display:inline-block;font-size:.74rem;font-weight:700;padding:2px 9px;border-radius:99px}
+.b-Low,.b-Approved{background:var(--okbg);color:var(--ok)}
+.b-Medium,.b-Info-requested{background:var(--warnbg);color:var(--warn)}
+.b-High,.b-Rejected{background:var(--errbg);color:var(--err)}
+.b-Pending-review{background:var(--infobg);color:var(--info)}
+.detail{margin-top:18px;border-top:1px solid var(--line);padding-top:18px}
+.factors{margin:0;padding-left:18px;font-size:.9rem}
+.hist{list-style:none;margin:0;padding:0;font-size:.86rem}
+.hist li{padding:6px 0;border-bottom:1px dashed var(--line)}
+.empty{text-align:center;color:var(--muted);padding:28px 12px;white-space:normal}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="nav">
+      <div class="logo">UAE <span>KYC</span> Verify</div>
+      <nav class="tabs"><a href="#apply" id="tabApply">Apply</a><a href="#review" id="tabReview">Reviewer</a></nav>
+    </div>
+    <div class="hero">
+      <h1 id="heroTitle">Business identity &amp; tax registration verification</h1>
+      <p id="heroText">Complete your Know-Your-Customer check for UAE entities: validate your Tax Registration Number (TRN), Emirates ID, trade licence and beneficial owners in a few minutes.</p>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+<!-- ================= APPLICANT ================= -->
+<div id="viewApply">
+  <section class="card">
+    <ol class="steps" id="steps">
+      <li>Business</li><li>Tax (TRN)</li><li>Owners</li><li>Screening</li><li>Documents</li><li>Review</li>
+    </ol>
+
+    <form id="form" novalidate>
+      <!-- 0 Business -->
+      <div class="step" data-step="0">
+        <h2>Business details</h2><p class="sub">Tell us about the entity being verified.</p>
+        <div class="grid">
+          <div class="field full"><label for="legalName">Legal name (as on trade licence)</label><input id="legalName" autocomplete="organization"><div class="hint"></div></div>
+          <div class="field"><label for="licenseNo">Trade licence number</label><input id="licenseNo"><div class="hint"></div></div>
+          <div class="field"><label for="licenseExpiry">Licence expiry date</label><input id="licenseExpiry" type="date"><div class="hint"></div></div>
+          <div class="field"><label for="authority">Issuing authority</label>
+            <select id="authority"><option value="">Select…</option>
+              <optgroup label="Mainland"><option>Abu Dhabi</option><option>Dubai</option><option>Sharjah</option><option>Ajman</option><option>Umm Al Quwain</option><option>Ras Al Khaimah</option><option>Fujairah</option></optgroup>
+              <optgroup label="Free zone"><option>DMCC</option><option>JAFZA</option><option>DIFC</option><option>ADGM</option><option>Dubai South / other Dubai free zone</option><option>SHAMS / SAIF / other Sharjah free zone</option><option>RAKEZ</option><option>Other free zone</option></optgroup>
+            </select><div class="hint"></div></div>
+          <div class="field"><label for="legalForm">Legal form</label>
+            <select id="legalForm"><option value="">Select…</option><option>LLC</option><option>Sole establishment</option><option>Free zone company (FZE/FZ-LLC)</option><option>Branch of foreign company</option><option>Public/Private joint stock</option><option>Civil company / partnership</option></select><div class="hint"></div></div>
+          <div class="field"><label for="activity">Main business activity</label>
+            <select id="activity"><option value="">Select…</option><option>General trading</option><option>Professional services / consultancy</option><option>Technology / software</option><option>Manufacturing</option><option>Restaurants &amp; hospitality</option><option>Construction &amp; contracting</option><option>Real estate brokerage</option><option>Precious metals &amp; stones</option><option>Money services / exchange</option><option>Other</option></select><div class="hint"></div></div>
+          <div class="field"><label for="email">Contact email</label><input id="email" type="email" autocomplete="email"><div class="hint"></div></div>
+        </div>
+      </div>
+
+      <!-- 1 Tax -->
+      <div class="step" data-step="1" hidden>
+        <h2>Tax registration</h2><p class="sub">Enter the 15-digit TRN issued by the Federal Tax Authority and the taxes it covers.</p>
+        <div class="grid">
+          <div class="field"><label for="trn">Tax Registration Number (TRN)</label><input id="trn" inputmode="numeric" maxlength="15" placeholder="100XXXXXXXXXXXX"><div class="hint">15 digits, starting with 100</div></div>
+          <div class="field"><label for="regDate">TRN effective date</label><input id="regDate" type="date"><div class="hint"></div></div>
+          <fieldset class="field full" id="taxTypesF"><legend>Registered for</legend>
+            <div class="opts">
+              <label class="opt"><input type="checkbox" name="taxType" value="VAT"> VAT</label>
+              <label class="opt"><input type="checkbox" name="taxType" value="Corporate Tax"> Corporate Tax</label>
+              <label class="opt"><input type="checkbox" name="taxType" value="Excise Tax"> Excise Tax</label>
+            </div><div class="hint">Select all that apply</div></fieldset>
+          <div class="field full" id="vatF" hidden><label for="vat">VAT return period</label>
+            <select id="vat"><option value="">Select…</option><option>Monthly</option><option>Quarterly</option></select><div class="hint"></div></div>
+        </div>
+      </div>
+
+      <!-- 2 Owners -->
+      <div class="step" data-step="2" hidden>
+        <h2>Authorised signatory</h2><p class="sub">The person who legally represents the entity.</p>
+        <div class="grid">
+          <div class="field full"><label for="ownerName">Full name (as on Emirates ID)</label><input id="ownerName" autocomplete="name"><div class="hint"></div></div>
+          <div class="field"><label for="eid">Emirates ID number</label><input id="eid" inputmode="numeric" placeholder="784-YYYY-NNNNNNN-C" maxlength="18"><div class="hint">Format 784-YYYY-NNNNNNN-C</div></div>
+          <div class="field"><label for="eidExpiry">Emirates ID expiry</label><input id="eidExpiry" type="date"><div class="hint"></div></div>
+          <div class="field"><label for="dob">Date of birth</label><input id="dob" type="date"><div class="hint"></div></div>
+          <div class="field"><label for="phone">Mobile (UAE)</label><input id="phone" type="tel" placeholder="+971 5X XXX XXXX"><div class="hint"></div></div>
+          <div class="field"><label for="nationality">Nationality</label><input id="nationality"><div class="hint"></div></div>
+        </div>
+        <h3>Ultimate beneficial owners</h3>
+        <p class="sub">Every natural person who owns or controls 25% or more of the entity. If no one does, list the senior managing official at 0%.</p>
+        <div id="ubos"></div>
+        <div class="field" id="uboF"><div class="hint"></div></div>
+        <div class="opts"><button type="button" class="ghost sm" id="addUbo">+ Add owner</button><button type="button" class="ghost sm" id="addSelf">+ Add signatory as owner</button></div>
+      </div>
+
+      <!-- 3 Screening -->
+      <div class="step" data-step="3" hidden>
+        <h2>AML screening declaration</h2><p class="sub">Required under UAE anti-money-laundering rules. Answer for the entity, its owners and signatories.</p>
+        <fieldset class="field q radio" data-name="pep"><legend>Is any owner, signatory or close associate a Politically Exposed Person (PEP)?</legend>
+          <div class="opts"><label class="opt"><input type="radio" name="pep" value="no"> No</label><label class="opt"><input type="radio" name="pep" value="yes"> Yes</label></div><div class="hint"></div></fieldset>
+        <fieldset class="field q radio" data-name="sanctions"><legend>Is the entity or any related person on a UAE, UN or other sanctions list?</legend>
+          <div class="opts"><label class="opt"><input type="radio" name="sanctions" value="no"> No</label><label class="opt"><input type="radio" name="sanctions" value="yes"> Yes</label></div><div class="hint"></div></fieldset>
+        <fieldset class="field q radio" data-name="highRisk"><legend>Does the business deal with countries on the FATF high-risk or increased-monitoring lists?</legend>
+          <div class="opts"><label class="opt"><input type="radio" name="highRisk" value="no"> No</label><label class="opt"><input type="radio" name="highRisk" value="yes"> Yes</label></div><div class="hint"></div></fieldset>
+        <div class="grid" style="margin-top:14px">
+          <div class="field"><label for="sourceFunds">Main source of funds</label>
+            <select id="sourceFunds"><option value="">Select…</option><option>Business revenue</option><option>Shareholder capital</option><option>Bank financing</option><option>Investment income</option><option>Other</option></select><div class="hint"></div></div>
+          <div class="field"><label for="turnover">Annual turnover</label>
+            <select id="turnover"><option value="">Select…</option><option>Below AED 375,000</option><option>AED 375,000 – 3 million</option><option>AED 3 – 50 million</option><option>Above AED 50 million</option></select><div class="hint"></div></div>
+        </div>
+      </div>
+
+      <!-- 4 Documents -->
+      <div class="step" data-step="4" hidden>
+        <h2>Supporting documents</h2><p class="sub">PDF, JPG or PNG, max 5&nbsp;MB each. Files stay in your browser in this demo.</p>
+        <div class="grid" id="docs"></div>
+      </div>
+
+      <!-- 5 Review -->
+      <div class="step" data-step="5" hidden>
+        <h2>Review &amp; submit</h2><p class="sub">Check everything before submitting.</p>
+        <dl class="kv" id="summary"></dl>
+        <label class="check"><input type="checkbox" id="consent"><span>I confirm the information is accurate and consent to its processing for KYC verification in line with UAE data protection law (PDPL).</span></label>
+        <div class="hint" id="consentHint" style="color:var(--err)"></div>
+      </div>
+
+      <!-- 6 Done -->
+      <div class="step result" data-step="6" hidden>
+        <div class="tick">✓</div>
+        <h2>Application received</h2>
+        <p class="sub">Your KYC request is queued for review. Keep your reference number.</p>
+        <div class="ref" id="ref"></div>
+        <p class="sub" id="doneNote"></p>
+        <button type="button" id="restart" class="ghost">Start a new verification</button>
+      </div>
+
+      <div class="row" id="nav">
+        <button type="button" class="ghost" id="back">Back</button>
+        <button type="button" id="next">Continue</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="info">
+    <div><h3>TRN &amp; ID checks</h3><p>Validates TRN structure, Emirates ID checksum, and that the ID's birth year matches the date of birth.</p></div>
+    <div><h3>UBO &amp; AML</h3><p>Captures beneficial owners (25%+) and PEP/sanctions declarations, then scores risk for the reviewer.</p></div>
+    <div><h3>Private by design</h3><p>This demo keeps data in your browser only. Nothing is uploaded.</p></div>
+  </section>
+</div>
+
+<!-- ================= REVIEWER ================= -->
+<div id="viewReview" hidden>
+  <section class="card">
+    <div class="stats" id="stats"></div>
+    <div class="toolbar">
+      <input id="q" type="search" placeholder="Search ref, entity or TRN">
+      <select id="fStatus"><option value="">All statuses</option><option>Pending review</option><option>Info requested</option><option>Approved</option><option>Rejected</option></select>
+      <button type="button" class="ghost sm" id="exportCsv">Export CSV</button>
+      <button type="button" class="ghost sm" id="loadSample">Load sample data</button>
+      <button type="button" class="ghost sm" id="clearAll">Clear all</button>
+    </div>
+    <div class="tablewrap">
+      <table><thead><tr><th>Reference</th><th>Entity</th><th>TRN</th><th>Risk</th><th>Status</th><th>Submitted</th></tr></thead><tbody id="rows"></tbody></table>
+    </div>
+    <div class="detail" id="detail" hidden>
+      <div class="row" style="margin-top:0;align-items:center"><h2 id="dTitle"></h2><span id="dBadges"></span></div>
+      <div class="grid" style="margin-top:12px">
+        <div><h3>Risk factors</h3><ul class="factors" id="dFactors"></ul></div>
+        <div><h3>History</h3><ul class="hist" id="dHist"></ul></div>
+      </div>
+      <h3>Application data</h3>
+      <dl class="kv" id="dData"></dl>
+      <h3>Decision</h3>
+      <div class="field"><label for="note">Reviewer note</label><textarea id="note" placeholder="Reason, missing items, or verification notes (e.g. TRN confirmed on FTA portal)"></textarea><div class="hint" id="noteHint"></div></div>
+      <div class="opts" style="margin-top:8px">
+        <button type="button" data-act="Approved">Approve</button>
+        <button type="button" class="warn" data-act="Info requested">Request info</button>
+        <button type="button" class="danger" data-act="Rejected">Reject</button>
+        <button type="button" class="ghost" id="delOne">Delete</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+  <p class="notice"><strong>Independent service.</strong> This site is not operated by, or affiliated with, the UAE Federal Tax Authority (FTA) or any government body. Format checks run locally; confirming that a TRN is active requires the FTA's official TRN verification service on tax.gov.ae, and sanctions screening requires checking the UAE Local Terrorist List and UN Consolidated List.</p>
+</main>
+
+<footer>© <span id="yr"></span> UAE KYC Verify · Demo build</footer>
+
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const el=(tag,props={},kids=[])=>{const e=Object.assign(document.createElement(tag),props);e.append(...kids);return e};
+$('#yr').textContent=new Date().getFullYear();
+
+/* ---------- storage (falls back to memory if localStorage is blocked) ---------- */
+const KEY='kycApps.v2'; let mem=[];
+const store={
+  get(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):mem}catch(e){return mem}},
+  set(a){mem=a;try{localStorage.setItem(KEY,JSON.stringify(a))}catch(e){}}
+};
+
+/* ---------- validation helpers ---------- */
+const today=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
+const luhn=d=>{let s=0;for(let i=0;i<d.length;i++){let n=+d[d.length-1-i];if(i%2){n*=2;if(n>9)n-=9}s+=n}return s%10===0};
+const HIGH_ACT=['Real estate brokerage','Precious metals & stones','Money services / exchange'];
+const rules={
+  legalName:v=>v.trim().length>=3||'Enter the full legal name',
+  licenseNo:v=>/^[A-Za-z0-9\-\/]{4,25}$/.test(v.trim())||'4–25 letters, numbers, - or /',
+  licenseExpiry:v=>!v?'Enter the expiry date':new Date(v)>today()||'Trade licence has expired – renew before KYC',
+  authority:v=>!!v||'Select the issuing authority',
+  legalForm:v=>!!v||'Select a legal form',
+  activity:v=>!!v||'Select the main activity',
+  email:v=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())||'Enter a valid email',
+  trn:v=>(/^\d{15}$/.test(v)&&v.startsWith('100'))||'TRN must be 15 digits starting with 100',
+  regDate:v=>(!!v&&new Date(v)<=new Date()&&new Date(v)>=new Date('2017-10-01'))||'Date must be between Oct 2017 and today',
+  vat:v=>!!v||'Select the VAT return period',
+  ownerName:v=>v.trim().split(/\s+/).length>=2||'Enter first and last name',
+  eid:v=>{const d=v.replace(/-/g,'');
+    if(!/^784\d{12}$/.test(d))return 'Format: 784-YYYY-NNNNNNN-C';
+    const y=+d.slice(3,7);if(y<1900||y>new Date().getFullYear())return 'Invalid birth year in ID';
+    return luhn(d)||'Checksum failed – check the digits'},
+  eidExpiry:v=>!v?'Enter the expiry date':new Date(v)>today()||'Emirates ID has expired',
+  dob:v=>{if(!v)return 'Enter date of birth';const a=(Date.now()-new Date(v))/31557600000;return (a>=18&&a<120)||'Signatory must be 18 or older'},
+  phone:v=>/^(\+971|00971|0)?5[0-9]\d{7}$/.test(v.replace(/[\s\-]/g,''))||'Enter a valid UAE mobile number',
+  nationality:v=>v.trim().length>=2||'Enter nationality',
+  sourceFunds:v=>!!v||'Select an option',
+  turnover:v=>!!v||'Select an option'
+};
+
+function mark(fld,res,def){
+  fld.classList.remove('bad','good');const h=fld.querySelector('.hint');
+  if(res===true){fld.classList.add('good');if(h)h.textContent=def||'';return true}
+  fld.classList.add('bad');if(h)h.textContent=res;return false}
+function checkInput(inp){
+  const r=rules[inp.id];if(!r)return true;
+  const f=inp.closest('.field'),h=f.querySelector('.hint');
+  if(h.dataset.def===undefined)h.dataset.def=h.textContent;
+  return mark(f,r(inp.value),h.dataset.def)}
+
+/* ---------- documents ---------- */
+const FILES=[['docTrade','Trade licence',true],['docTrn','TRN / tax registration certificate',true],['docEid','Emirates ID (front & back)',true],['docMoa','MoA or shareholder register (optional)',false]];
+FILES.forEach(([id,label])=>{
+  $('#docs').append(el('div',{className:'field full'},[
+    el('label',{htmlFor:id,textContent:label}),
+    el('div',{className:'drop'},[el('input',{id,type:'file',accept:'.pdf,.jpg,.jpeg,.png'})]),
+    el('div',{className:'hint'})]))});
+function checkFile(id,req){
+  const inp=$('#'+id),f=inp.files[0],fld=inp.closest('.field');
+  if(!f)return req?mark(fld,'Required'):(fld.classList.remove('bad','good'),true);
+  if(!/\.(pdf|jpe?g|png)$/i.test(f.name))return mark(fld,'Only PDF, JPG or PNG');
+  if(f.size>5*1024*1024)return mark(fld,'File exceeds 5 MB');
+  return mark(fld,true,'✓ '+f.name)}
+
+/* ---------- UBOs ---------- */
+function addUbo(name='',nat='',pct=''){
+  const row=el('div',{className:'ubo'},[
+    el('input',{className:'u-name',placeholder:'Full name',value:name,ariaLabel:'Owner full name'}),
+    el('input',{className:'u-nat',placeholder:'Nationality',value:nat,ariaLabel:'Owner nationality'}),
+    el('input',{className:'u-pct',placeholder:'%',type:'number',min:0,max:100,step:'0.01',value:pct,ariaLabel:'Ownership percent'}),
+    el('button',{type:'button',className:'ghost sm',textContent:'Remove',onclick:()=>row.remove()})]);
+  $('#ubos').append(row)}
+const readUbos=()=>$$('#ubos .ubo').map(r=>({name:r.querySelector('.u-name').value.trim(),nationality:r.querySelector('.u-nat').value.trim(),pct:parseFloat(r.querySelector('.u-pct').value)}));
+function checkUbos(){
+  const u=readUbos(),f=$('#uboF');
+  if(!u.length)return mark(f,'Add at least one beneficial owner or senior managing official');
+  if(u.some(x=>x.name.split(/\s+/).length<2||!x.nationality||isNaN(x.pct)||x.pct<0||x.pct>100))return mark(f,'Each owner needs a full name, nationality and a 0–100% share');
+  const tot=u.reduce((s,x)=>s+x.pct,0);
+  if(tot>100.001)return mark(f,'Shares add up to '+tot+'% – cannot exceed 100%');
+  return mark(f,true,u.some(x=>x.pct>=25)?'':'No one holds 25%+ – the senior managing official will be recorded as UBO')}
+$('#addUbo').onclick=()=>addUbo();
+$('#addSelf').onclick=()=>addUbo($('#ownerName').value.trim(),$('#nationality').value.trim());
+
+/* ---------- step validation ---------- */
+const steps=$$('.step'),stepLis=$$('#steps li'),LAST=5;let cur=0;
+const radio=n=>(document.querySelector('input[name="'+n+'"]:checked')||{}).value||'';
+const taxTypes=()=>$$('input[name=taxType]:checked').map(x=>x.value);
+
+function validateStep(i){
+  const s=steps[i];let ok=true;
+  s.querySelectorAll('input,select').forEach(inp=>{if(inp.id&&rules[inp.id]&&!inp.closest('[hidden]:not(.step)')&&!checkInput(inp))ok=false});
+  if(i===1&&!mark($('#taxTypesF'),taxTypes().length?true:'Select at least one tax type','Select all that apply'))ok=false;
+  if(i===2){
+    const d=$('#eid').value.replace(/-/g,''),dob=$('#dob').value;
+    if(rules.eid($('#eid').value)===true&&dob&&d.slice(3,7)!==dob.slice(0,4)){mark($('#eid').closest('.field'),'ID birth year ('+d.slice(3,7)+') does not match date of birth');ok=false}
+    if(!checkUbos())ok=false}
+  if(i===3)s.querySelectorAll('fieldset.radio').forEach(f=>{if(!mark(f,radio(f.dataset.name)?true:'Please answer'))ok=false});
+  if(i===4)FILES.forEach(([id,,req])=>{if(!checkFile(id,req))ok=false});
+  if(i===5){const c=$('#consent').checked;$('#consentHint').textContent=c?'':'Consent is required to submit';ok=ok&&c}
+  if(!ok){const b=s.querySelector('.bad');if(b)b.scrollIntoView({behavior:'smooth',block:'center'})}
+  return ok}
+
+function show(i){
+  cur=i;steps.forEach((s,k)=>s.hidden=k!==i);
+  stepLis.forEach((li,k)=>{li.className=k<i?'done':k===i?'on':''});
+  $('#back').style.visibility=i===0?'hidden':'visible';
+  $('#next').textContent=i===LAST?'Submit verification':'Continue';
+  $('#nav').hidden=i>LAST;$('#steps').hidden=i>LAST;
+  if(i===LAST)renderDL($('#summary'),rowsFor(collect(),true));
+  window.scrollTo({top:0,behavior:'smooth'})}
+
+/* ---------- data, summary, risk ---------- */
+function collect(){
+  const g=id=>$('#'+id).value.trim(),tt=taxTypes();
+  return{legalName:g('legalName'),licenseNo:g('licenseNo'),licenseExpiry:g('licenseExpiry'),authority:g('authority'),legalForm:g('legalForm'),activity:g('activity'),email:g('email'),
+    trn:g('trn'),regDate:g('regDate'),taxTypes:tt,vat:tt.includes('VAT')?g('vat'):'',
+    ownerName:g('ownerName'),eid:g('eid'),eidExpiry:g('eidExpiry'),dob:g('dob'),phone:g('phone'),nationality:g('nationality'),ubos:readUbos(),
+    pep:radio('pep'),sanctions:radio('sanctions'),highRisk:radio('highRisk'),sourceFunds:g('sourceFunds'),turnover:g('turnover'),
+    docs:FILES.map(([id,label])=>({label,file:($('#'+id).files[0]||{}).name||''})).filter(x=>x.file)}}
+
+const mask=s=>s&&s.length>6?s.slice(0,4)+'•'.repeat(s.length-6)+s.slice(-2):s;
+const yn=v=>v==='yes'?'Yes':v==='no'?'No':'—';
+function rowsFor(d,masked){
+  return[['Legal name',d.legalName],['Trade licence',d.licenseNo+' · '+d.authority+' · expires '+d.licenseExpiry],['Legal form',d.legalForm],['Activity',d.activity],['Email',d.email],
+    ['TRN',d.trn],['TRN effective',d.regDate],['Tax types',(d.taxTypes||[]).join(', ')+(d.vat?' (VAT '+d.vat.toLowerCase()+')':'')],
+    ['Signatory',d.ownerName+' · '+d.nationality],['Emirates ID',(masked?mask(d.eid):d.eid)+' · expires '+d.eidExpiry],['Date of birth',d.dob],['Mobile',d.phone],
+    ['Beneficial owners',(d.ubos||[]).map(u=>u.name+' ('+u.nationality+', '+u.pct+'%)').join('; ')],
+    ['PEP',yn(d.pep)],['Sanctions match',yn(d.sanctions)],['High-risk jurisdictions',yn(d.highRisk)],['Source of funds',d.sourceFunds],['Turnover',d.turnover],
+    ['Documents',(d.docs||[]).map(x=>x.label.replace(/ \(.*\)$/,'')+': '+x.file).join('; ')||'—']]}
+function renderDL(dl,rows){dl.textContent='';rows.forEach(([k,v])=>dl.append(el('dt',{textContent:k}),el('dd',{textContent:v||'—'})))}
+
+function scoreRisk(d){
+  let s=0;const f=[];
+  if(d.sanctions==='yes'){s+=60;f.push('Sanctions list match declared (+60)')}
+  if(d.pep==='yes'){s+=35;f.push('Politically exposed person involved (+35)')}
+  if(d.highRisk==='yes'){s+=25;f.push('Dealings with FATF high-risk jurisdictions (+25)')}
+  if(HIGH_ACT.includes(d.activity)){s+=15;f.push('Higher-risk sector: '+d.activity+' (+15)')}
+  if(d.sourceFunds==='Other'){s+=10;f.push('Source of funds unspecified (+10)')}
+  if(d.ubos&&d.ubos.length&&!d.ubos.some(u=>u.pct>=25)){s+=10;f.push('No natural person holds 25%+ (+10)')}
+  if(d.turnover==='Below AED 375,000'&&(d.taxTypes||[]).includes('VAT'))f.push('Note: turnover below mandatory VAT threshold (voluntary registration?)');
+  if(!f.length)f.push('No risk indicators');
+  return{score:Math.min(s,100),level:s>=50?'High':s>=25?'Medium':'Low',factors:f}}
+
+/* ---------- applicant navigation ---------- */
+$('#next').onclick=()=>{
+  if(!validateStep(cur))return;
+  if(cur<LAST)return show(cur+1);
+  const data=collect(),ref='KYC-'+new Date().getFullYear()+'-'+Math.random().toString(36).slice(2,8).toUpperCase(),at=new Date().toISOString();
+  const all=store.get();all.push({ref,at,status:'Pending review',data,risk:scoreRisk(data),history:[{at,status:'Pending review',note:'Submitted by applicant'}]});store.set(all);
+  $('#ref').textContent=ref;
+  $('#doneNote').textContent='Confirmation would be sent to '+data.email+'. (Demo: stored in this browser only — open the Reviewer tab to process it.)';
+  show(LAST+1)};
+$('#back').onclick=()=>{if(cur>0)show(cur-1)};
+$('#restart').onclick=()=>{$('#form').reset();$('#ubos').textContent='';$('#vatF').hidden=true;$$('.field').forEach(f=>f.classList.remove('good','bad'));$$('.hint[data-def]').forEach(h=>h.textContent=h.dataset.def);show(0)};
+
+$('#trn').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,15)});
+$('#eid').addEventListener('input',e=>{const d=e.target.value.replace(/\D/g,'').slice(0,15);
+  e.target.value=[d.slice(0,3),d.slice(3,7),d.slice(7,14),d.slice(14)].filter(Boolean).join('-')});
+$$('input[name=taxType]').forEach(c=>c.addEventListener('change',()=>{$('#vatF').hidden=!taxTypes().includes('VAT');if(taxTypes().length)mark($('#taxTypesF'),true,'Select all that apply')}));
+$$('#form input:not([type=file]):not([type=checkbox]):not([type=radio]),#form select').forEach(i=>i.addEventListener('blur',()=>{if(i.value)checkInput(i)}));
+$$('fieldset.radio input').forEach(r=>r.addEventListener('change',()=>mark(r.closest('fieldset'),true)));
+FILES.forEach(([id,,req])=>$('#'+id).addEventListener('change',()=>checkFile(id,req)));
+$('#form').addEventListener('submit',e=>e.preventDefault());
+
+/* ---------- reviewer ---------- */
+let sel=null;
+const fmt=iso=>{const d=new Date(iso);return isNaN(d)?'—':d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})};
+const badge=t=>el('span',{className:'badge b-'+t.replace(/\s+/g,'-'),textContent:t});
+
+function renderReview(){
+  const all=store.get(),cnt=s=>all.filter(a=>a.status===s).length;
+  $('#stats').textContent='';
+  [['Total',all.length],['Pending',cnt('Pending review')+cnt('Info requested')],['Approved',cnt('Approved')],['Rejected',cnt('Rejected')],['High risk',all.filter(a=>a.risk.level==='High').length]]
+    .forEach(([k,v])=>$('#stats').append(el('div',{className:'stat'},[el('b',{textContent:v}),el('span',{textContent:k})])));
+  const q=$('#q').value.trim().toLowerCase(),st=$('#fStatus').value;
+  const list=all.filter(a=>(!st||a.status===st)&&(!q||(a.ref+' '+a.data.legalName+' '+a.data.trn).toLowerCase().includes(q))).sort((a,b)=>b.at.localeCompare(a.at));
+  const tb=$('#rows');tb.textContent='';
+  if(!list.length)tb.append(el('tr',{},[el('td',{colSpan:6,className:'empty',textContent:all.length?'No applications match your filters.':'No applications yet. Submit one from the Apply tab, or load sample data.'})]));
+  list.forEach(a=>{const tr=el('tr',{className:a.ref===sel?'sel':'',tabIndex:0},[
+      el('td',{className:'mono',textContent:a.ref}),el('td',{textContent:a.data.legalName}),el('td',{className:'mono',textContent:a.data.trn}),
+      el('td',{},[badge(a.risk.level)]),el('td',{},[badge(a.status)]),el('td',{textContent:fmt(a.at)})]);
+    tr.onclick=()=>{sel=a.ref;$('#note').value='';$('#noteHint').textContent='';renderReview();$('#detail').scrollIntoView({behavior:'smooth'})};
+    tr.onkeydown=e=>{if(e.key==='Enter')tr.onclick()};
+    tb.append(tr)});
+  const a=all.find(x=>x.ref===sel);$('#detail').hidden=!a;if(!a)return;
+  $('#dTitle').textContent=a.data.legalName+' · '+a.ref;
+  $('#dBadges').textContent='';$('#dBadges').append(badge(a.risk.level),' ',badge(a.status));
+  $('#dFactors').textContent='';$('#dFactors').append(el('li',{textContent:'Score '+a.risk.score+'/100 → '+a.risk.level+' risk'+(a.risk.level==='High'?' (enhanced due diligence required)':'')}),...a.risk.factors.map(t=>el('li',{textContent:t})));
+  $('#dHist').textContent='';a.history.slice().reverse().forEach(h=>$('#dHist').append(el('li',{},[el('strong',{textContent:h.status}),' · '+fmt(h.at)+(h.note?' — '+h.note:'')])));
+  renderDL($('#dData'),rowsFor(a.data,false))}
+
+$$('[data-act]').forEach(b=>b.onclick=()=>{
+  const status=b.dataset.act,note=$('#note').value.trim(),all=store.get(),a=all.find(x=>x.ref===sel);if(!a)return;
+  if(status!=='Approved'&&!note){$('#noteHint').textContent='Add a note explaining this decision';$('#note').focus();return}
+  if(status==='Approved'&&a.data.sanctions==='yes'&&!confirm('A sanctions match was declared. UAE rules require freezing and reporting, not onboarding. Approve anyway?'))return;
+  a.status=status;a.history.push({at:new Date().toISOString(),status,note});store.set(all);
+  $('#note').value='';$('#noteHint').textContent='';renderReview()});
+$('#delOne').onclick=()=>{if(!confirm('Delete '+sel+'? This cannot be undone.'))return;store.set(store.get().filter(x=>x.ref!==sel));sel=null;renderReview()};
+$('#clearAll').onclick=()=>{if(store.get().length&&confirm('Delete all applications stored in this browser?')){store.set([]);sel=null;renderReview()}};
+$('#q').oninput=renderReview;$('#fStatus').onchange=renderReview;
+
+$('#exportCsv').onclick=()=>{
+  const all=store.get();if(!all.length)return alert('Nothing to export.');
+  const cols=['ref','submitted','status','risk','score','legalName','licenseNo','authority','legalForm','activity','trn','taxTypes','ownerName','eid','nationality','ubos','pep','sanctions','highRisk','email'];
+  const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const lines=[cols.join(',')].concat(all.map(a=>{const d=a.data;return[a.ref,a.at,a.status,a.risk.level,a.risk.score,d.legalName,d.licenseNo,d.authority,d.legalForm,d.activity,"'"+d.trn,(d.taxTypes||[]).join('; '),d.ownerName,d.eid,d.nationality,(d.ubos||[]).map(u=>u.name+' '+u.pct+'%').join('; '),d.pep,d.sanctions,d.highRisk,d.email].map(q).join(',')}));
+  const url=URL.createObjectURL(new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv'}));
+  el('a',{href:url,download:'kyc-applications-'+new Date().toISOString().slice(0,10)+'.csv'}).click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+
+$('#loadSample').onclick=()=>{
+  const rnd=n=>Array.from({length:n},()=>Math.floor(Math.random()*10)).join('');
+  const eid=y=>{const p='784'+y+rnd(7);for(let c=0;c<10;c++)if(luhn(p+c))return p.slice(0,3)+'-'+p.slice(3,7)+'-'+p.slice(7)+'-'+c};
+  const fut=m=>{const d=new Date();d.setMonth(d.getMonth()+m);return d.toISOString().slice(0,10)};
+  const mk=(name,activity,authority,owner,y,nat,ubos,pep,sanctions,highRisk,status,daysAgo)=>{
+    const data={legalName:name,licenseNo:'CN-'+rnd(7),licenseExpiry:fut(8),authority,legalForm:authority.includes('DMCC')?'Free zone company (FZE/FZ-LLC)':'LLC',activity,email:'accounts@example.com',
+      trn:'100'+rnd(12),regDate:'2019-03-01',taxTypes:['VAT','Corporate Tax'],vat:'Quarterly',ownerName:owner,eid:eid(y),eidExpiry:fut(14),dob:y+'-06-15',phone:'+971 50 '+rnd(3)+' '+rnd(4),nationality:nat,
+      ubos,pep,sanctions,highRisk,sourceFunds:'Business revenue',turnover:'AED 3 – 50 million',docs:[{label:'Trade licence',file:'licence.pdf'},{label:'TRN / tax registration certificate',file:'trn.pdf'},{label:'Emirates ID (front & back)',file:'eid.pdf'}]};
+    const at=new Date(Date.now()-daysAgo*864e5).toISOString(),hist=[{at,status:'Pending review',note:'Submitted by applicant'}];
+    if(status!=='Pending review')hist.push({at:new Date(Date.now()-(daysAgo-1)*864e5).toISOString(),status,note:status==='Approved'?'TRN confirmed on FTA portal; documents verified':'Awaiting source-of-wealth evidence'});
+    return{ref:'KYC-'+new Date().getFullYear()+'-'+Math.random().toString(36).slice(2,8).toUpperCase(),at,status,data,risk:scoreRisk(data),history:hist}};
+  store.set(store.get().concat([
+    mk('Al Noor General Trading LLC','General trading','Dubai','Fatima Al Mansoori',1984,'Emirati',[{name:'Fatima Al Mansoori',nationality:'Emirati',pct:60},{name:'Rahul Menon',nationality:'Indian',pct:40}],'no','no','no','Approved',6),
+    mk('Golden Crest Jewellery FZE','Precious metals & stones','DMCC','Omar Haddad',1976,'Jordanian',[{name:'Omar Haddad',nationality:'Jordanian',pct:100}],'yes','no','yes','Info requested',4),
+    mk('Bluewave Tech Solutions LLC','Technology / software','Abu Dhabi','Sara Kim',1990,'Korean',[{name:'Sara Kim',nationality:'Korean',pct:51},{name:'Daniel Ruiz',nationality:'Spanish',pct:49}],'no','no','no','Pending review',1)]));
+  renderReview()};
+
+/* ---------- routing ---------- */
+function route(){
+  const r=location.hash==='#review'?'review':'apply';
+  $('#viewApply').hidden=r!=='apply';$('#viewReview').hidden=r!=='review';
+  $('#tabApply').className=r==='apply'?'on':'';$('#tabReview').className=r==='review'?'on':'';
+  $('#heroTitle').textContent=r==='apply'?'Business identity & tax registration verification':'KYC review queue';
+  $('#heroText').textContent=r==='apply'?'Complete your Know-Your-Customer check for UAE entities: validate your Tax Registration Number (TRN), Emirates ID, trade licence and beneficial owners in a few minutes.':'Review submitted applications, check risk indicators, and record approval decisions with an audit trail.';
+  if(r==='review')renderReview()}
+window.addEventListener('hashchange',route);
+route();show(0);
+})();
+</script>
+</body>
+</html>
